@@ -1,394 +1,213 @@
 <!doctype html>
 <html lang="es">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Gala 2025 — Cuenta atrás</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gala 2025</title>
 
-  <style>
-    :root {
-      --bg: #000000;
-      --fg: #e5e7eb;
-      --muted: #9ca3af;
-      --accent: #ffffff;
-      --redsoft: #e34b4b;
-      --border: #1f2937;
-      --ok: #22c55e;
-      --error: #ef4444;
-    }
+<style>
+body{
+  margin:0;
+  background:#000;
+  color:#fff;
+  font-family:system-ui, -apple-system, Segoe UI, Roboto;
+}
+.wrap{
+  max-width:900px;
+  margin:auto;
+  padding:2rem;
+}
+h1{
+  letter-spacing:.1em;
+  text-transform:uppercase;
+}
+.sub{
+  color:#e34b4b;
+  letter-spacing:.2em;
+  margin-bottom:2rem;
+}
+input,button{
+  background:#111;
+  color:#fff;
+  border:1px solid #333;
+  padding:.7rem 1rem;
+  border-radius:10px;
+}
+button{ cursor:pointer; }
+.menu{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+  gap:1rem;
+  margin-top:2rem;
+}
+.menu a{
+  text-align:center;
+  text-decoration:none;
+  color:#fff;
+  border:1px solid #333;
+  padding:1rem;
+  border-radius:14px;
+}
+.hidden{ display:none; }
 
-    * { box-sizing:border-box; margin:0; padding:0; }
-    html,body { height:100%; }
-
-    /* PORTADA */
-    body {
-      background: radial-gradient(900px 600px at 50% 10%, #0a0a0a 0, #050505 40%, #000 100%);
-      color:var(--fg);
-      font-family: ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto;
-      display:grid;
-      place-items:center;
-    }
-
-    .wrap {
-      width:100%;
-      max-width:900px;
-      padding:2rem;
-      text-align:center;
-    }
-
-    h1 {
-      font-size:clamp(2rem,6vw,4rem);
-      color:var(--accent);
-      text-transform:uppercase;
-      margin-bottom:.5rem;
-    }
-
-    .subtag {
-      color:var(--redsoft);
-      letter-spacing:.25em;
-      margin-bottom:2rem;
-      text-transform:uppercase;
-    }
-
-    .grid {
-      display:grid;
-      grid-template-columns:repeat(4, minmax(120px,1fr));
-      gap:1rem;
-    }
-
-    .box {
-      background:rgba(255,255,255,0.02);
-      border:1px solid var(--border);
-      border-radius:18px;
-      padding:1.2rem 1rem;
-    }
-
-    .num { font-size:2rem; font-weight:800; }
-    .label { font-size:.9rem; color:var(--muted); text-transform:uppercase; letter-spacing:.18em; }
-
-    .panel-acceso {
-      margin:2rem auto 0;
-      display:grid;
-      grid-template-columns:1fr auto;
-      gap:.7rem;
-      max-width:420px;
-    }
-
-    .panel-acceso input {
-      background:#0b0b0b;
-      border:1px solid var(--border);
-      color:white;
-      padding:.8rem 1rem;
-      border-radius:12px;
-    }
-
-    .panel-acceso button {
-      background:#0f0f0f;
-      border:1px solid var(--border);
-      padding:.8rem 1rem;
-      border-radius:12px;
-      cursor:pointer;
-      color:white;
-    }
-
-    .msg {
-      min-height:1.3rem;
-      margin-top:.6rem;
-      font-size:.95rem;
-    }
-    .msg.ok { color:var(--ok); }
-    .msg.error { color:var(--error); }
-
-    #menu-secreto {
-      display:none;
-      margin-top:1.5rem;
-    }
-
-    .menu-wrap {
-      display:grid;
-      grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
-      gap:.8rem;
-    }
-
-    .menu-item {
-      display:block;
-      padding:1rem;
-      border:1px solid var(--border);
-      background:#0b0b0b;
-      border-radius:14px;
-      color:white;
-      text-decoration:none;
-      text-align:center;
-    }
-
-    /* DASHBOARD */
-    body.logged-in { display:block; padding:1.5rem 2rem; }
-
-    body.logged-in .wrap {
-      text-align:left;
-      margin:0 auto;
-      padding:0;
-      max-width:900px;
-    }
-
-    body.logged-in h1 { font-size:1.8rem; text-align:left; }
-    body.logged-in .subtag { font-size:.75rem; text-align:left; margin-top:.3rem; }
-
-    body.logged-in #countdown {
-      grid-template-columns:repeat(4,80px);
-      gap:.5rem;
-      justify-items:start;
-      width:fit-content;
-    }
-
-    body.logged-in .box {
-      padding:.6rem .4rem;
-      border-radius:10px;
-    }
-
-    body.logged-in .num { font-size:1.2rem; }
-
-    /* INVITACIÓN FULLSCREEN + HUMO */
-    @keyframes fadeInInv {
-      from { opacity:0; transform:translateY(20px);}
-      to   { opacity:1; transform:translateY(0);}
-    }
-
-    @keyframes humoFlotar {
-      0%   { transform:translate3d(0,0,0); opacity:0.12; }
-      50%  { transform:translate3d(40px,-30px,0); opacity:0.22; }
-      100% { transform:translate3d(0,0,0); opacity:0.12; }
-    }
-
-    #pantalla-invitacion {
-      display:none;
-      position:fixed;
-      inset:0;
-      background:#000;
-      color:#fff;
-      z-index:9999;
-      overflow:auto;
-      padding:3rem 1.5rem;
-    }
-
-    #pantalla-invitacion .capa-humo {
-      position:fixed;
-      inset:0;
-      pointer-events:none;
-      overflow:hidden;
-      z-index:-1;
-    }
-
-    .humo {
-      position:absolute;
-      width:420px;
-      height:420px;
-      background:radial-gradient(circle at 30% 30%, rgba(255,255,255,0.3), transparent 60%);
-      filter:blur(30px);
-      opacity:0.18;
-      animation:humoFlotar 24s infinite ease-in-out;
-    }
-
-    .humo.h1 { top:10%; left:-10%; }
-    .humo.h2 { bottom:0%; right:-5%; animation-duration:30s; }
-    .humo.h3 { top:40%; left:50%; animation-duration:28s; }
-
-    #pantalla-invitacion .contenido {
-      max-width:900px;
-      margin:0 auto;
-      animation:fadeInInv 1.8s ease forwards;
-      position:relative;
-      z-index:1;
-      line-height:1.7;
-      font-size:1.1rem;
-    }
-
-    #pantalla-invitacion h2 {
-      font-size:2rem;
-      margin-bottom:1rem;
-    }
-
-    #pantalla-invitacion p { margin:0.9rem 0; }
-
-    #boton-volver {
-      margin-top:2.5rem;
-      padding:.8rem 1.4rem;
-      border-radius:999px;
-      border:1px solid #444;
-      background:#111;
-      color:#fff;
-      cursor:pointer;
-      font-size:.95rem;
-    }
-  </style>
+.overlay{
+  position:fixed;
+  inset:0;
+  background:#000;
+  overflow:auto;
+  padding:2rem;
+}
+.card{
+  border:1px solid #333;
+  border-radius:14px;
+  padding:1rem;
+  margin-top:1rem;
+}
+.vote-line{
+  display:grid;
+  grid-template-columns:1fr 80px;
+  gap:1rem;
+  margin:.4rem 0;
+}
+.vote-line input{
+  text-align:center;
+}
+.ok{ color:#22c55e; }
+.err{ color:#ef4444; }
+</style>
 </head>
 
 <body>
+<div class="wrap">
+  <h1 id="titulo">Gala 2025</h1>
+  <div class="sub">Make Lostios Great Again</div>
 
-  <!-- CONTENIDO NORMAL -->
-  <main class="wrap">
+  <div id="login">
+    <input id="clave" type="password" placeholder="Código">
+    <button onclick="login()">Entrar</button>
+    <div id="msg"></div>
+  </div>
 
-    <h1 id="titulo">Gala 2025</h1>
-    <p class="subtag">Make Lostios Great Again</p>
+  <div id="menu" class="menu hidden">
+    <a href="#" onclick="abrirVotaciones()">Votaciones</a>
+    <a href="https://maps.app.goo.gl/KUfR8wCoTkdzYVhE7" target="_blank">Ubicación</a>
+    <a href="https://files.maldita.es/maldita/uploads/undated/foto%20gorila%20broma.jpg" target="_blank">Highlights</a>
+  </div>
+</div>
 
-    <section class="grid" id="countdown">
-      <div class="box"><div class="num" id="dias">--</div><div class="label">Días</div></div>
-      <div class="box"><div class="num" id="horas">--</div><div class="label">Horas</div></div>
-      <div class="box"><div class="num" id="min">--</div><div class="label">Minutos</div></div>
-      <div class="box"><div class="num" id="seg">--</div><div class="label">Segundos</div></div>
-    </section>
+<div id="votaciones" class="overlay hidden"></div>
 
-    <div class="panel-acceso" id="panel-acceso">
-      <input id="clave" placeholder="Introduce el código…">
-      <button id="btn-acceder">Entrar</button>
-      <div class="msg" id="msg"></div>
-    </div>
+<script>
+/* ===== CONFIG ADMIN ===== */
+const VOTES_ENDPOINT = "https://script.google.com/macros/s/AKfycbznlHNrTxbNC4hlz69O3XgcKmKSmUh6Pw7A6H3wU9J_PQthdBmtYCpRYC6vSgnsgyLOLQ/exec";
+const TOKEN = "GALA2025_SECRETO";
 
-    <div id="bienvenida" class="msg"></div>
+/* ===== DATOS ===== */
+const CLAVES = {
+ peseta:"Arturo", escopeta:"Xiki", bet365:"Enrique",
+ lamatera:"Sergi", julian:"Javi", largo:"Largo",
+ salitre:"Lucas", traepan:"Nico", gaficas:"Alvarico",
+ eoldlb:"Raul", admin:"Yuca"
+};
+const INTEGRANTES = ["Arturo","Xiki","Enrique","Sergi","Javi","Largo","Lucas","Nico","Alvarico","Raul","Yuca"];
+const CATS = [
+ {id:"mas_ennoviao",t:"Más ennoviao"},
+ {id:"mejor_estilo",t:"Mejor estilazo de ropa"},
+ {id:"mas_cunao",t:"Más cuñao"},
+ {id:"mas_fiestero",t:"Más fiestero"}
+];
 
-    <section id="menu-secreto">
-      <div class="menu-wrap">
+let usuario=null, paso=0, votos={};
 
-        <a class="menu-item" href="#" onclick="mostrarInvitacion();return false;">Invitación</a>
+/* ===== LOGIN ===== */
+function login(){
+ const v=document.getElementById("clave").value.toLowerCase().trim();
+ const msg=document.getElementById("msg");
+ if(CLAVES[v]){
+   usuario=CLAVES[v];
+   msg.textContent="Bienvenido, "+usuario;
+   msg.className="ok";
+   document.getElementById("login").style.display="none";
+   document.getElementById("menu").classList.remove("hidden");
+ }else{
+   msg.textContent="Código incorrecto";
+   msg.className="err";
+ }
+}
 
-        <a class="menu-item" href="https://maps.app.goo.gl/KUfR8wCoTkdzYVhE7" target="_blank">Ubicación</a>
+/* ===== VOTACIONES ===== */
+function abrirVotaciones(){
+ paso=0; votos={};
+ document.getElementById("votaciones").classList.remove("hidden");
+ render();
+}
 
-        <a class="menu-item" href="#" onclick="alert('Votaciones no disponibles 😅');return false;">
-          Votaciones
-        </a>
+function cerrar(){
+ document.getElementById("votaciones").classList.add("hidden");
+}
 
-        <a class="menu-item" href="https://files.maldita.es/maldita/uploads/undated/foto%20gorila%20broma.jpg" target="_blank">
-          Highlights
-        </a>
+function render(){
+ const box=document.getElementById("votaciones");
+ if(paso===0){
+   box.innerHTML=`
+   <div class="card">
+    <h2>Votaciones 2025</h2>
+    <p>Votarás 4 categorías puntuando del 1 al 10.</p>
+    <button onclick="paso=1;render()">Empezar</button>
+    <button onclick="cerrar()">Cerrar</button>
+   </div>`;
+   return;
+ }
+ if(paso>=1 && paso<=4){
+   const cat=CATS[paso-1];
+   let html=`<div class="card"><h3>${cat.t}</h3>`;
+   INTEGRANTES.forEach(n=>{
+     html+=`
+     <div class="vote-line">
+      <label>${n}</label>
+      <input type="number" min="1" max="10" id="${cat.id}_${n}">
+     </div>`;
+   });
+   html+=`
+    <button onclick="guardar('${cat.id}')">Siguiente</button>
+    <button onclick="cerrar()">Cerrar</button>
+   </div>`;
+   box.innerHTML=html;
+   return;
+ }
+ if(paso===5){
+   box.innerHTML=`
+   <div class="card">
+    <h3>Confirmar voto</h3>
+    <button onclick="enviar()">Enviar voto</button>
+    <button onclick="cerrar()">Cerrar</button>
+   </div>`;
+ }
+}
 
-      </div>
-    </section>
+function guardar(cat){
+ votos[cat]={};
+ for(const n of INTEGRANTES){
+  const v=Number(document.getElementById(cat+"_"+n).value);
+  if(v<1||v>10){ alert("Valores 1–10"); return; }
+  votos[cat][n]=v;
+ }
+ paso++; render();
+}
 
-  </main>
-
-  <!-- INVITACIÓN FULLSCREEN (FUERA DEL WRAP) -->
-  <section id="pantalla-invitacion"></section>
-
-  <script>
-    /* CONTADOR */
-    function pad(n){return n.toString().padStart(2,"0");}
-    function tick(){
-      const diff=Math.max(0,new Date("2025-12-31T17:00:00+01:00")-Date.now());
-      seg.textContent=pad(Math.floor(diff/1000)%60);
-      min.textContent=pad(Math.floor(diff/60000)%60);
-      horas.textContent=pad(Math.floor(diff/3600000)%24);
-      dias.textContent=Math.floor(diff/86400000);
-    }
-    setInterval(tick,1000); tick();
-
-    /* LOGIN */
-    const CLAVES={
-      peseta:"Arturo", escopeta:"Xiki", bet365:"Enrique",
-      lamatera:"Sergi", julian:"Javi", largo:"Largo",
-      salitre:"Lucas", traepan:"Nico", gaficas:"Alvarico",
-      eoldlb:"Raul", admin:"Yuca"
-    };
-
-    const clave=document.getElementById("clave");
-    const msg=document.getElementById("msg");
-    const bienvenida=document.getElementById("bienvenida");
-    const panel=document.getElementById("panel-acceso");
-    const menu=document.getElementById("menu-secreto");
-    const titulo=document.getElementById("titulo");
-
-    document.getElementById("btn-acceder").onclick=acceder;
-    clave.onkeydown=e=>{if(e.key==="Enter")acceder();};
-
-    if(sessionStorage.menu_ok==="1"){
-      mostrarMenu(sessionStorage.usuario_nombre);
-    }
-
-    function acceder(){
-      const v=clave.value.trim().toLowerCase();
-      if(!v){ msg.textContent="Escribe el código."; msg.className="msg error"; return; }
-
-      if(CLAVES[v]){
-        const nombre=CLAVES[v];
-        sessionStorage.menu_ok="1";
-        sessionStorage.usuario_nombre=nombre;
-        mostrarMenu(nombre);
-      } else {
-        msg.textContent="Código incorrecto."; msg.className="msg error";
-      }
-    }
-
-    function mostrarMenu(nombre){
-      document.body.classList.add("logged-in");
-      titulo.textContent="Gala Los Tíos 2025";
-      panel.style.display="none";
-      menu.style.display="block";
-      bienvenida.textContent=`Bienvenido, ${nombre}`;
-      bienvenida.className="msg ok";
-    }
-
-    /* INVITACIÓN FULLSCREEN + HUMO + BOTÓN VOLVER */
-    function mostrarInvitacion(){
-      const nombre=sessionStorage.usuario_nombre||"Invitado";
-      const inv=document.getElementById("pantalla-invitacion");
-
-      inv.innerHTML=`
-        <div class="capa-humo">
-          <div class="humo h1"></div>
-          <div class="humo h2"></div>
-          <div class="humo h3"></div>
-        </div>
-
-        <div class="contenido">
-
-          <iframe width="0" height="0"
-            src="https://www.youtube.com/embed/sZd34o19mIg?autoplay=1&controls=0"
-            style="opacity:0;width:1px;height:1px;position:absolute;"
-            allow="autoplay"></iframe>
-
-          <h2>${nombre},</h2>
-
-          <p>
-          Has sido formal y solemnemente convocado a la
-          <strong>sexta gala anual de los chavales</strong>,
-          un acontecimiento reservado a aquellos cuya presencia
-          ha dejado huella.
-          </p>
-
-          <p>
-          Tu invitación no es fruto del azar, sino del reconocimiento a tu honor,
-          camaradería y nobleza. Desde ahora eres custodio de información que
-          deberá ser mantenida bajo la más estricta
-          <strong>confidencialidad</strong>. Cualquier infraccion será penada con la muerte.
-          </p>
-
-          <p>
-          Que tu presencia en esta gala sea solemne, digna de aquel que pertenece
-          —por derecho— a esta congregación selecta.
-          </p>
-
-          <em style="margin-top:2rem;display:block;">
-            Que la noche sea larga,<br>
-            la compañía excelsa,<br>
-            y que tu presencia engrandezca,<br>
-            una vez más,<br>
-            la leyenda de los tios.
-          </em>
-
-          <button id="boton-volver" onclick="cerrarInvitacion()">Volver</button>
-        </div>
-      `;
-
-      inv.style.display="block";
-      window.scrollTo(0,0);
-    }
-
-    function cerrarInvitacion(){
-      // más simple y limpio: recargar la página
-      window.location.reload();
-    }
-  </script>
-
+async function enviar(){
+ const payload=new URLSearchParams({
+  token:TOKEN,
+  payload:JSON.stringify({
+   voter:usuario,
+   submittedAt:new Date().toISOString(),
+   scores:votos
+  })
+ });
+ await fetch(VOTES_ENDPOINT,{method:"POST",body:payload});
+ alert("Voto enviado. Gracias.");
+ cerrar();
+}
+</script>
 </body>
 </html>
-
-
